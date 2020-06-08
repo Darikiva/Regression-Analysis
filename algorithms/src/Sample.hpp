@@ -21,6 +21,6 @@ public:
     [[nodiscard]]
     double Yi(const int i) const;
 private:
-    MatrixXd _X;
-    MatrixXd _Y;
+    MatrixXd _x;
+    MatrixXd _y;
 };

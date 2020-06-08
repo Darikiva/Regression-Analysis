@@ -1,31 +1,31 @@
 #include "Sample.hpp"
 #include <vector>
 
-Sample::Sample(const MatrixXd& X, const MatrixXd Y) :_X{ X }, _Y{ Y } {}
+Sample::Sample(const MatrixXd& X, const MatrixXd Y) :_x{ X }, _y{ Y } {}
 
 Sample::Sample(const std::vector<std::vector<double>>& X, const std::vector<double>& Y) {
-    _X = MatrixXd(X[0].size(),X.size());
+    _x = MatrixXd(X[0].size(),X.size());
     for (int i = 0; i < X[0].size(); ++i)
         for (int j = 0; j < X.size(); ++j)
-            _X(i, j) = X[i][j];
+            _x(i, j) = X[i][j];
 
-    _Y = MatrixXd(Y.size(),1);
+    _y = MatrixXd(Y.size(),1);
     for (int i = 0; i < Y.size(); ++i)
-        _Y(i, 0) = Y[i];
+        _y(i, 0) = Y[i];
 }
 
 MatrixXd Sample::X() const {
-    return _X;
+    return _x;
 }
 
 MatrixXd Sample::Y() const {
-    return _Y;
+    return _y;
 }
 
 MatrixXd Sample::Xi(const int i) const {
-    return _X.row(i);
+    return _x.row(i);
 }
 
 double Sample::Yi(const int i) const {
-    return _Y(i, 0);
+    return _y(i, 0);
 }
