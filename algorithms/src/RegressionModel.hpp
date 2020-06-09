@@ -22,6 +22,7 @@ public:
     [[nodiscard]]
     vector<int> defineModel(const double statSignif) const;
 
+
 private:   
     void _countAlpha();
 private:

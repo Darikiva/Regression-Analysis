@@ -1,5 +1,7 @@
 #include "RegressionModel.hpp"
 #include "stats.hpp"
+#include <future>
+#include <thread>
 
 void RegressionModel::setSample(Sample& s) {
     _s = &s;
@@ -68,24 +70,30 @@ namespace {
 }
 
 vector<std::pair<double, double>> RegressionModel::confidenceIntervals(const double statSignif) {
-    MatrixXd xa = _s->X()*_alpha;
-    double sigma = sqrt(varianceEstimator(_s->Y(), xa, _s->X().cols()));
+    auto s = std::async([this, statSignif]() -> vector<std::pair<double, double>> {
+        MatrixXd xa = _s->X()*_alpha;
+        double sigma = sqrt(varianceEstimator(_s->Y(), xa, _s->X().cols()));
 
-    vector<std::pair<double, double>> result;
-    for (int i = 0; i < _s->X().cols(); ++i)
-        result.push_back(countInterval(_alpha, _s->X(), sigma, statSignif, i));
+        vector<std::pair<double, double>> result;
+        for (int i = 0; i < _s->X().cols(); ++i)
+            result.push_back(countInterval(_alpha, _s->X(), sigma, statSignif, i));
+        return result;
+    });
 
-    return result;
+    return s.get();
 }
 
 void RegressionModel::significance(const double statSignif) {
-    double variance = varianceEstimator(_s->Y(), _s->X()*_alpha, _s->X().cols());
-    for (int i = 0; i < _s->X().cols(); ++i)
-        if (!significant(_alpha, _s->X(), variance, statSignif, i))
-            _alpha(i, 0) = 0.;
+    auto s = std::async([this, statSignif]() {
+        double variance = varianceEstimator(_s->Y(), _s->X()*_alpha, _s->X().cols());
+        for (int i = 0; i < _s->X().cols(); ++i)
+            if (!significant(_alpha, _s->X(), variance, statSignif, i))
+                _alpha(i, 0) = 0.;
+    });
+    return s.get();
 }
 
-vector<int> RegressionModel::defineModel(const double statSignif) const {
+    vector<int> RegressionModel::defineModel(const double statSignif) const {
     vector<int> I(_s->X().cols());
     double variance = varianceEstimator(_s->Y(), _s->X()*_alpha, _s->X().cols());
     for (int i = 0; i < I.size(); ++i)
@@ -115,6 +123,9 @@ vector<int> RegressionModel::defineModel(const double statSignif) const {
 
 
 void RegressionModel::_countAlpha() {
-    MatrixXd tmp = _s->X().transpose()*_s->X();
-    _alpha = tmp.inverse()*_s->X().transpose()*_s->Y();
+    auto s = std::async([this] {
+        MatrixXd tmp = _s->X().transpose()*_s->X();
+        _alpha = tmp.inverse()*_s->X().transpose()*_s->Y();
+    });
+    s.get();
 }
