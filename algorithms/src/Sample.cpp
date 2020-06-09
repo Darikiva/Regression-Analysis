@@ -1,5 +1,6 @@
 #include "Sample.hpp"
 #include <vector>
+#include <iostream>
 
 double corelationCoef(const Eigen::VectorXd& ksi, const Eigen::VectorXd& theta) {
     double x_hat{0}, y_hat{0};
