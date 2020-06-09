@@ -1,5 +1,7 @@
 #include "RegressionModel.hpp"
 #include "stats.hpp"
+#include <future>
+#include <thread>
 
 void RegressionModel::setSample(Sample& s) {
     _s = &s;
@@ -74,7 +76,7 @@ void RegressionModel::significance(const double statSignif) {
             _alpha(i, 0) = 0.;
 }
 
-MatrixXd RegressionModel::defineModel(const double statSignif) const {
+MatrixXd RegressionModel::defineModel(const double &statSignif) const {
     return _alpha;
 }
 
