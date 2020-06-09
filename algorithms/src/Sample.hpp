@@ -19,10 +19,10 @@ public:
     MatrixXd Y() const;
 
     [[nodiscard]]
-    MatrixXd Xi(const int& i) const;
+    MatrixXd Xi(const int i) const;
 
     [[nodiscard]]
-    double Yi(const int& i) const;
+    double Yi(const int i) const;
 
     bool isDependant(double alpha);
 private:

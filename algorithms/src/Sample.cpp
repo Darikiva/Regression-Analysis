@@ -30,12 +30,12 @@ double corelationCoef(const Eigen::VectorXd& ksi, const Eigen::VectorXd& theta) 
 
 Sample::Sample(const MatrixXd& X, const MatrixXd& Y) :_x{ X }, _y{ Y } {}
 
+
 Sample::Sample(const std::vector<std::vector<double>>& X, const std::vector<double>& Y) {
     _x = MatrixXd(X[0].size(),X.size());
     for (int i = 0; i < X[0].size(); ++i)
         for (int j = 0; j < X.size(); ++j)
             _x(i, j) = X[j][i];
-
     _y = MatrixXd(Y.size(),1);
     for (int i = 0; i < Y.size(); ++i)
         _y(i, 0) = Y[i];
@@ -49,13 +49,15 @@ MatrixXd Sample::Y() const {
     return _y;
 }
 
-MatrixXd Sample::Xi(const int& i) const {
+MatrixXd Sample::Xi(const int i) const {
     return _x.row(i);
 }
 
-double Sample::Yi(const int& i) const {
+double Sample::Yi(const int i) const {
     return _y(i, 0);
+
 }
+
 
 bool Sample::isDependant(double alpha) {
     auto mda = std::async(std::launch::async, [this, alpha]() -> bool
