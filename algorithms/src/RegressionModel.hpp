@@ -20,7 +20,7 @@ public:
     void significance(const double statSignif);
 
     [[nodiscard]]
-    MatrixXd defineModel(const double statSignif) const;
+    MatrixXd defineModel(const double& statSignif) const;
 
 private:   
     void _countAlpha();

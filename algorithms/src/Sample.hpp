@@ -1,5 +1,8 @@
 #pragma once
 #include "Eigen"
+#include "stats.hpp"
+#include <vector>
+#include <future>
 #include <vector>
 using Eigen::MatrixXd;
 
@@ -20,6 +23,8 @@ public:
 
     [[nodiscard]]
     double Yi(const int& i) const;
+
+    bool isDependant(double alpha);
 private:
     MatrixXd _x;
     MatrixXd _y;
