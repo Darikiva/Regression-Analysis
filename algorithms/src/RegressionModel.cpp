@@ -93,32 +93,35 @@ void RegressionModel::significance(const double statSignif) {
     return s.get();
 }
 
-    vector<int> RegressionModel::defineModel(const double statSignif) const {
-    vector<int> I(_s->X().cols());
-    double variance = varianceEstimator(_s->Y(), _s->X()*_alpha, _s->X().cols());
-    for (int i = 0; i < I.size(); ++i)
-        I[i] = i;
-    int p = I.size();
+vector<int> RegressionModel::defineModel(const double statSignif) const {
+    auto s = std::async([this, statSignif](){
+        vector<int> I(_s->X().cols());
+        double variance = varianceEstimator(_s->Y(), _s->X()*_alpha, _s->X().cols());
+        for (int i = 0; i < I.size(); ++i)
+            I[i] = i;
+        int p = I.size();
 
-    while (true) {
-        vector<double> vFi(p);
-        for (int i = 0; i < p; ++i)
-            vFi[i] = Fi(_alpha, _s->X(), variance, statSignif, I[i]);
+        while (true) {
+            vector<double> vFi(p);
+            for (int i = 0; i < p; ++i)
+                vFi[i] = Fi(_alpha, _s->X(), variance, statSignif, I[i]);
 
-        int candidate = min(vFi);
-        ///Check H0: Fi<F(1,N-p)
-        if (vFi[candidate] < stats::qf(1 - statSignif / 2, 1, _s->X().rows() - p)) {
-            vFi.erase(vFi.begin() + candidate);
-            I.erase(I.begin() + candidate);
-            --p;
-            if (!p)
+            int candidate = min(vFi);
+            ///Check H0: Fi<F(1,N-p)
+            if (vFi[candidate] < stats::qf(1 - statSignif / 2, 1, _s->X().rows() - p)) {
+                vFi.erase(vFi.begin() + candidate);
+                I.erase(I.begin() + candidate);
+                --p;
+                if (!p)
+                    break;
+            }
+            else
                 break;
         }
-        else
-            break;
-    }
 
-    return I;
+        return I;
+    });
+    return s.get();
 }
 
 
